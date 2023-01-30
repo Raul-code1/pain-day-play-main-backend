@@ -18,6 +18,7 @@ const fileUpload=require('express-fileupload');
 const authRouter=require('./routes/authRoutes')
 const userRouter=require('./routes/userRoutes')
 const companyRouter=require('./routes/companyRoutes')
+const commentRouter=require('./routes/commentsRoutes')
 
 //*Middleware
 const notFoundMiddleware = require("./middleware/not-found");
@@ -33,6 +34,7 @@ app.use(express.static('./public'))
 app.use('/api/v1/auth',authRouter);
 app.use('/api/v1/user',userRouter);
 app.use('/api/v1/companies',companyRouter);
+app.use('/api/v1/comments',commentRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);

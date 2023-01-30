@@ -52,9 +52,17 @@ const CompanySchema= new Schema({
         refer:'User',
         required:true,
     }
+},{
+    toJSON:{virtuals:true},
+    toObject:{virtuals:true},
 })
 
-
+CompanySchema.virtual('comments',{
+    ref:'Comment',
+    localField:'_id',
+    foreignField:'company',
+    justOne:false,
+})
 
 
 

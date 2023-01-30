@@ -14,14 +14,14 @@ const createCompany = async (req, res) => {
 const getAllCompanies = async (req, res) => {
   const { category, sort } = req.query;
   const companies = await Company.find({ category })
-    .select("_id name location pricing")
+    .select("_id name location pricing image")
     .sort(`${sort}.price`);
   res.status(StatusCodes.OK).json({ companies, count: companies.length });
 };
 
 const getSingleCompay = async (req, res) => {
   const { id } = req.params;
-  const company = await Company.findOne({ _id: id });
+  const company = await Company.findOne({ _id: id }).populate('comments')
   if (!company)
     throw new CustomError.NotFoundError(
       `No hay ninguna isntalacion con el id ${id}`
