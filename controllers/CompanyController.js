@@ -1,4 +1,4 @@
-const path= require('path');
+const path = require("path");
 const { StatusCodes } = require("http-status-codes");
 
 const CustomError = require("../errors");
@@ -12,16 +12,19 @@ const createCompany = async (req, res) => {
 };
 
 const getAllCompanies = async (req, res) => {
+  let queryObject = {};
   const { category, sort } = req.query;
-  const companies = await Company.find({ category })
-    .select("_id name location pricing image")
-    .sort(`${sort}.price`);
+
+  if (category !== "all") {
+    queryObject.category = category;
+  }
+  const companies = await Company.find(queryObject).sort(`${sort}.price`);
   res.status(StatusCodes.OK).json({ companies, count: companies.length });
 };
 
 const getSingleCompay = async (req, res) => {
   const { id } = req.params;
-  const company = await Company.findOne({ _id: id }).populate('comments')
+  const company = await Company.findOne({ _id: id }).populate("comments");
   if (!company)
     throw new CustomError.NotFoundError(
       `No hay ninguna isntalacion con el id ${id}`
@@ -87,15 +90,21 @@ const uploadImage = async (req, res) => {
   const companyImage = req.files.image;
   if (!companyImage.mimetype.startsWith("image"))
     throw new CustomError.BadRequestError("Por favor selecciona un archivo");
-    
-    const maxSize= 1024 * 1024;
-    if (companyImage.size > maxSize)throw new CustomError.BadRequestError("Por favor selecciona un archivo mas pequeño");
-        
-    const imagePath= path.join(__dirname,'../public/uploads/'+`${companyImage.name}`)
 
-    await companyImage.mv(imagePath)
+  const maxSize = 1024 * 1024;
+  if (companyImage.size > maxSize)
+    throw new CustomError.BadRequestError(
+      "Por favor selecciona un archivo mas pequeño"
+    );
 
-     res.status(StatusCodes.OK).json({image:`/uploads/${companyImage.name}`});
+  const imagePath = path.join(
+    __dirname,
+    "../public/uploads/" + `${companyImage.name}`
+  );
+
+  await companyImage.mv(imagePath);
+
+  res.status(StatusCodes.OK).json({ image: `/uploads/${companyImage.name}` });
 };
 
 module.exports = {
